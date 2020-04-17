@@ -28,9 +28,12 @@ elif [[ ${LSB_RELEASE} =~ "Debian GNU/Linux 10" ]]; then
     PACKAGES="${DEBIAN_10_PACKAGES}"
 fi
 
+export DEBIAN_FRONTEND=noninteractive
+export DEBCONF_NONINTERACTIVE_SEEN=true
+export UCF_FORCE_CONFOLD=1
 sudo echo '* libraries/restart-without-asking boolean true' | sudo debconf-set-selections
 sudo apt update
-sudo DEBIAN_FRONTEND=noninteractive apt install \
+sudo apt -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y install \
     adb autoconf automake axel bc bison build-essential \
     ccache clang cmake expat fastboot flex g++ \
     g++-multilib gawk gcc gcc-multilib git gnupg gperf \
@@ -41,7 +44,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt install \
     pngquant python2.7 python-all-dev re2c schedtool squashfs-tools subversion \
     texinfo unzip w3m xsltproc zip zlib1g-dev lzip \
     libxml-simple-perl apt-utils \
-    "${PACKAGES}" -y
+    "${PACKAGES}"
 
 # For all those distro hoppers, lets setup your git credentials
 GIT_USERNAME="$(git config --get user.name)"
